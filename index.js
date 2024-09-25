@@ -30,3 +30,9 @@ app.listen(port, () => {
 });
 
 app.use("/completions", require("./routes/completions"));
+
+app.use("/users", require("./routes/users/users"));
+app.use("/auth", require("./routes/users/auth"));
+
+app.use("/phrases", require("./routes/phrases/phrases"));
+app.use("/phraseCompletion", require("./routes/phrases/phraseCompletion"));

@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 router.get("/", async (req, res) => {
-    const prompt = "Write a story about a magic backpack.";
+    const prompt = "give me 10 phrases for a new product launch";
     try {
         const completions = await model.generateContent(prompt);
         res.json({ completions: completions.response.text() });
