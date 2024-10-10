@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
 
 //register
 router.post("/register", async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, firstName, lastName } = req.body;
 
     try {
         const existing = await User.findOne({ username: username });
@@ -49,6 +49,15 @@ router.post("/register", async (req, res) => {
         const user = new User({
             username: username,
             password: hashedPassword,
+            profile_firstName: firstName,
+            profile_lastName: lastName,
+            learningProgress_listening: [],
+            learningProgress_reading: [],
+            learningProgress_games: [],
+            learningProgress_flashcards: [],
+            learningProgress_phrases: [],
+            examsTaken: [],
+            createdAt: new Date(),
         });
 
         await user.save();
@@ -79,7 +88,7 @@ router.post("/login", async (req, res) => {
         }
 
         const accessToken = jwt.sign({ username: user.username }, JWT_SECRET, {
-            expiresIn: "1h",
+            expiresIn: "24h",
         });
 
         const refreshToken = jwt.sign(
