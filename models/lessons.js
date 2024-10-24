@@ -5,9 +5,14 @@ const lessonSchema = new mongoose.Schema(
         title: String,
         type: String,
         contentURL: String,
-        question_questionName: String,
-        question_questionOptions: [String],
-        question_correctAnswer: String,
+        questions: [
+            {
+                questionName: String,
+                questionOptions: [String],
+                correctAnswer: String,
+                _id: false,
+            },
+        ],
         AIExplaination: String,
         createdAt: Date,
     },

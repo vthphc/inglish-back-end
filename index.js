@@ -22,7 +22,7 @@ mongoose.connection.once("open", () => {
 });
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+    res.json({ message: "This is inglish-API" });
 });
 
 app.listen(port, () => {
@@ -36,3 +36,5 @@ app.use("/auth", require("./routes/users/auth"));
 
 app.use("/phrases", require("./routes/phrases/phrases"));
 app.use("/phraseCompletion", require("./routes/phrases/phraseCompletion"));
+
+app.use("/lessons", require("./routes/lessons/lessons"));
