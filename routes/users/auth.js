@@ -27,13 +27,13 @@ const verifyToken = (req, res, next) => {
 
 //register
 router.post("/register", async (req, res) => {
-    const { username, password, firstName, lastName } = req.body;
+    const { username, password, email } = req.body;
 
     try {
-        const existing = await User.findOne({ username: username });
+        const existing = await User.findOne({ email: email });
 
         if (existing) {
-            return res.status(401).json({ message: "Username already taken" });
+            return res.status(401).json({ message: "Email in use!" });
         }
 
         if (password.length < 8 || password.includes(" ")) {
@@ -49,8 +49,7 @@ router.post("/register", async (req, res) => {
         const user = new User({
             username: username,
             password: hashedPassword,
-            profile_firstName: firstName,
-            profile_lastName: lastName,
+            email: email,
             learningProgress_listening: [],
             learningProgress_reading: [],
             learningProgress_games: [],
