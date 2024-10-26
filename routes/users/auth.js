@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
 
 //register
 router.post("/register", async (req, res) => {
-    const { username, password, email } = req.body;
+    const { email, username, password } = req.body;
 
     try {
         const existing = await User.findOne({ email: email });
@@ -47,9 +47,9 @@ router.post("/register", async (req, res) => {
 
     try {
         const user = new User({
+            email: email,
             username: username,
             password: hashedPassword,
-            email: email,
             learningProgress_listening: [],
             learningProgress_reading: [],
             learningProgress_games: [],
