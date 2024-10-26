@@ -100,7 +100,14 @@ router.post("/login", async (req, res) => {
             { expiresIn: "7d" }
         );
 
-        res.json({ accessToken, refreshToken });
+        res.json({
+            user: {
+                email: user.email,
+                username: user.username,
+            },
+            accessToken,
+            refreshToken,
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
