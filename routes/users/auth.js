@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -6,8 +7,6 @@ const router = express.Router();
 
 const User = require("../../models/users");
 
-const JWT_SECRET = "inglish_uit_jwt_secret";
-const JWT_SECRET_REFRESH = "inglish_uit_jwt_secret_refresh";
 
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization;
@@ -16,7 +15,7 @@ const verifyToken = (req, res, next) => {
         return res.status(401).json({ message: "Unauthorized" });
     }
 
-    jwt.verify(token.split(" ")[1], JWT_SECRET, (err, decoded) => {
+    jwt.verify(token.split(" ")[1], process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -88,7 +87,7 @@ router.post("/login", async (req, res) => {
 
         const accessToken = jwt.sign(
             { email: user.email, username: user.username },
-            JWT_SECRET,
+            process.env.JWT_SECRET,
             {
                 expiresIn: "24h",
             }
@@ -96,7 +95,7 @@ router.post("/login", async (req, res) => {
 
         const refreshToken = jwt.sign(
             { email: user.email, username: user.username },
-            JWT_SECRET_REFRESH,
+            process.env.JWT_SECRET_REFRESH,
             { expiresIn: "7d" }
         );
 

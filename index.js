@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const jwt_auth = require("./middleware/jwt_auth");
 
 require("dotenv").config();
 
@@ -11,6 +12,7 @@ const databaseURL = process.env.DB_URL;
 
 app.use(cors());
 app.use(bodyParser.json());
+app.all("*", jwt_auth);//Xài middleware này trên tất cả routes để xác thực là đã có người dùng đăng nhập (đã có token)
 
 mongoose.connect(databaseURL, {
     useNewUrlParser: true,
