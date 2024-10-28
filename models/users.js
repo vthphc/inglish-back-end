@@ -8,27 +8,26 @@ const userSchema = new mongoose.Schema(
         learning: {
             listening: [
                 {
-                    lesson: {
-                        type: mongoose.Schema.Types.ObjectId,
-                        ref: "Lesson",
-                    },
-                    score: Number,
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Lesson",
                 },
             ],
             reading: [
                 {
-                    lesson: {
-                        type: mongoose.Schema.Types.ObjectId,
-                        ref: "Lesson",
-                    },
-                    score: Number,
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Lesson",
                 },
             ],
             games: [String],
             flashcards: [String],
             phrases: [{ type: mongoose.Schema.Types.ObjectId, ref: "Phrase" }],
         },
-        examsTaken: [String],
+        examsTaken: [
+            {
+                lesson: { type: mongoose.Schema.Types.ObjectId, ref: "Lesson" },
+                score: Number,
+            },
+        ],
         createdAt: Date,
     },
     { versionKey: false }
