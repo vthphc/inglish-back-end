@@ -21,6 +21,15 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+router.get("/user/:userId", async (req, res) => {
+    try {
+        const phrases = await Phrase.find({ userId: req.params.userId });
+        res.json(phrases);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.delete("/:id", async (req, res) => {
     try {
         const phrase = await Phrase.findByIdAndDelete(req.params.id);
