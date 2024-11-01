@@ -11,13 +11,20 @@ const jwt_auth = (req, res, next) => {
             //Verify
             try {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                req.user = {
+                    email: decoded.email,
+                    username: decoded.username,
+                    userId: decoded.userId,
+                };
                 console.log("Decoded: ", decoded);
                 next();
             } catch (err) {
-                return res.status(401).json({ message: "Unauthorized" });
+                return res
+                    .status(401)
+                    .json({ message: "Token hết hạn/ không hợp lệ!" });
             }
         } else {
-            return res.status(401).json({ message: "Unauthorized" });
+            return res.status(401).json({ message: "Chưa truyền token!" });
         }
     }
 };

@@ -7,7 +7,6 @@ const router = express.Router();
 
 const User = require("../../models/users");
 
-
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization;
 
@@ -86,7 +85,7 @@ router.post("/login", async (req, res) => {
         }
 
         const accessToken = jwt.sign(
-            { email: user.email, username: user.username },
+            { email: user.email, username: user.username, userId: user._id },
             process.env.JWT_SECRET,
             {
                 expiresIn: "24h",
@@ -94,7 +93,7 @@ router.post("/login", async (req, res) => {
         );
 
         const refreshToken = jwt.sign(
-            { email: user.email, username: user.username },
+            { email: user.email, username: user.username, userId: user._id },
             process.env.JWT_SECRET_REFRESH,
             { expiresIn: "7d" }
         );
@@ -103,6 +102,7 @@ router.post("/login", async (req, res) => {
             user: {
                 email: user.email,
                 username: user.username,
+                userId: user._id,
             },
             accessToken,
             refreshToken,
