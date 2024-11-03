@@ -17,20 +17,20 @@ app.all("*", jwt_auth);
 //nếu muốn truy cập tất cả các routes thì comment lại code app.all() trên
 
 mongoose.connect(databaseURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
 });
 
 mongoose.connection.once("open", () => {
-    console.log("Connected to database");
+	console.log("Connected to database");
 });
 
 app.get("/", (req, res) => {
-    res.json({ message: "This is inglish-API" });
+	res.json({ message: "This is inglish-API" });
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on port: ${port}`);
+	console.log(`Server is running on port: ${port}`);
 });
 
 app.use("/completions", require("./routes/completions"));
@@ -43,3 +43,4 @@ app.use("/phrases", require("./routes/phrases/phrases"));
 app.use("/phraseCompletion", require("./routes/phrases/phraseCompletion"));
 
 app.use("/lessons", require("./routes/lessons/lessons"));
+app.use("/exams", require("./routes/exams/exams"));

@@ -16,7 +16,7 @@ const jwt_auth = (req, res, next) => {
                     username: decoded.username,
                     userId: decoded.userId,
                 };
-                console.log("Decoded: ", decoded);
+                console.log(req.user);
                 next();
             } catch (err) {
                 return res
