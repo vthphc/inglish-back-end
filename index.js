@@ -12,7 +12,7 @@ const databaseURL = process.env.DB_URL;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.all("*", jwt_auth);
+// app.all("*", jwt_auth);
 //Xài middleware này trên tất cả routes để xác thực là đã có người dùng đăng nhập (đã có token),
 //nếu muốn truy cập tất cả các routes thì comment lại code app.all() trên
 

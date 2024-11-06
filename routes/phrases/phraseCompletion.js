@@ -23,7 +23,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 router.post("/", async (req, res) => {
     const { userId, topic } = req.body;
-    const prompt = `Generate 5 dialogues about the topic "${topic}" with two speakers, labeled as "Person A" and "Person B". Format each response as: 
+    const prompt = `Generate a dialogue about the topic "${topic}" between two speakers, labeled as "Person A" and "Person B". Format each response as: 
     Person A: [line]
     Person B: [line]`;
 
