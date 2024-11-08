@@ -112,4 +112,33 @@ router.post("/login", async (req, res) => {
     }
 });
 
+//change password
+router.patch("/change-password", async (req, res) => {
+    const { email, oldPassword, newPassword } = req.body;
+
+    try {
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const match = await bcrypt.compare(oldPassword, user.password);
+        if (!match) {
+            return res.status(403).json({ message: "Invalid old password" });
+        }
+
+        if (newPassword.length < 8 || newPassword.includes(" ")) {
+            return res.status(402).json({ message: "Invalid new password" });//TODO: Validate password
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedNewPassword;
+
+        await user.save();
+        res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

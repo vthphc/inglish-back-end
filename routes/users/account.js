@@ -7,7 +7,10 @@ router.get("/", async (req, res) => {
 		console.log(req.user);
 		return res.json(req.user);
 	}
-	res.status(401).json({ message: "Unauthorized" });
+	res.status(401).json({
+		errorCode: "EC0",
+		errorMessage: "Token hết hạn/ không hợp lệ!",
+	});
 });
 
 module.exports = router;

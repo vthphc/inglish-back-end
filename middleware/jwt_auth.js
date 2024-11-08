@@ -24,7 +24,7 @@ const jwt_auth = (req, res, next) => {
 			} catch (err) {
 				return res.status(401).json({
 					errorCode: "EC0",
-					message: "Token hết hạn/ không hợp lệ!",
+					errorMessage: "Token hết hạn/ không hợp lệ!",
 				});
 			}
 		} else {
