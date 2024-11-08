@@ -25,120 +25,144 @@ const User = require("../../models/users");
 
 //register
 router.post("/register", async (req, res) => {
-    const { email, username, password } = req.body;
+	const { email, username, password } = req.body;
 
-    try {
-        const existing = await User.findOne({ email: email });
+	try {
+		const existing = await User.findOne({ email: email });
 
-        if (existing) {
-            return res.status(401).json({ message: "Email in use!" });
-        }
+		if (existing) {
+			return res
+				.status(401)
+				.json({ message: "Email in use!" });
+		}
 
-        if (password.length < 8 || password.includes(" ")) {
-            return res.status(402).json({ message: "Invalid password" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		if (password.length < 8 || password.includes(" ")) {
+			return res
+				.status(402)
+				.json({ message: "Invalid password" });
+		}
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+	const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({
-        email,
-        username,
-        password: hashedPassword,
-        learning: {
-            games: [],
-            flashcards: [],
-            phrases: [],
-        },
-        examsTaken: [],
-        createdAt: new Date(),
-    });
+	const user = new User({
+		email,
+		username,
+		password: hashedPassword,
+		learning: {
+			games: [],
+			flashcards: [],
+			phrases: [],
+		},
+		examsTaken: [],
+		createdAt: new Date(),
+	});
 
-    try {
-        await user.save();
-        res.status(201).json({ message: "User created" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-
+	try {
+		await user.save();
+		res.status(201).json({ message: "User created" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 //login
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+	const { email, password } = req.body;
 
-    try {
-        const user = await User.findOne({ email: email });
-        if (!user) {
-            return res
-                .status(403)
-                .json({ message: "Invalid email or password" });
-        }
+	try {
+		const user = await User.findOne({ email: email });
+		if (!user) {
+			return res
+				.status(403)
+				.json({ message: "Invalid email or password" });
+		}
 
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return res
-                .status(403)
-                .json({ message: "Invalid email or password" });
-        }
+		const match = await bcrypt.compare(password, user.password);
+		if (!match) {
+			return res
+				.status(403)
+				.json({ message: "Invalid email or password" });
+		}
 
-        const accessToken = jwt.sign(
-            { email: user.email, username: user.username, userId: user._id },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: "24h",
-            }
-        );
+		const accessToken = jwt.sign(
+			{
+				email: user.email,
+				username: user.username,
+				userId: user._id,
+			},
+			process.env.JWT_SECRET,
+			{
+				expiresIn: "24h",
+			}
+		);
 
-        const refreshToken = jwt.sign(
-            { email: user.email, username: user.username, userId: user._id },
-            process.env.JWT_SECRET_REFRESH,
-            { expiresIn: "7d" }
-        );
+		const refreshToken = jwt.sign(
+			{
+				email: user.email,
+				username: user.username,
+				userId: user._id,
+			},
+			process.env.JWT_SECRET_REFRESH,
+			{ expiresIn: "7d" }
+		);
 
-        return res.json({
-            user: {
-                email: user.email,
-                username: user.username,
-                userId: user._id,
-            },
-            accessToken,
-            refreshToken,
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		return res.json({
+			user: {
+				email: user.email,
+				username: user.username,
+				userId: user._id,
+			},
+			accessToken,
+			refreshToken,
+		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
-//change password
-router.patch("/change-password", async (req, res) => {
-    const { email, oldPassword, newPassword } = req.body;
+//change info
+router.patch("/change-info", async (req, res) => {
+	const { username, email, oldPassword, newPassword } = req.body;
 
-    try {
-        const user = await User.findOne({ email: email });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+	try {
+		const user = await User.findOne({ email: email });
+		if (!user) {
+			return res
+				.status(404)
+				.json({
+					errorCode: "EC0",
+					errorMessage: "User not found",
+				});
+		}
 
-        const match = await bcrypt.compare(oldPassword, user.password);
-        if (!match) {
-            return res.status(403).json({ message: "Invalid old password" });
-        }
+		const match = await bcrypt.compare(oldPassword, user.password);
+		if (!match) {
+			return res.status(403).json({
+				errorCode: "EC1",
+				errorMessage: "Invalid old password",
+			});
+		}
 
-        if (newPassword.length < 8 || newPassword.includes(" ")) {
-            return res.status(402).json({ message: "Invalid new password" });//TODO: Validate password
-        }
+		if (newPassword.length < 8 || newPassword.includes(" ")) {
+			return res.status(402).json({
+				errorCode: "EC2",
+				errorMessage: "Invalid new password",
+			}); //TODO: Validate password
+		}
 
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedNewPassword;
-
-        await user.save();
-        res.status(200).json({ message: "Password changed successfully" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+		user.password = hashedNewPassword;
+		user.username = username;
+		await user.save();
+		res.status(200).json({
+			message: "Password changed successfully",
+		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 module.exports = router;
