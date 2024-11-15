@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
+const Lesson = require("./lessons");
 
 const examSchema = new mongoose.Schema(
 	{
 		title: String,
-		content: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: "Lesson" },
-		],
+		content: [{ type: Lesson.schema, required: true }],
 		createdAt: Date,
 	},
 	{ versionKey: false }
