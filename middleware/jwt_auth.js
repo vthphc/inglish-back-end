@@ -19,12 +19,13 @@ const jwt_auth = (req, res, next) => {
 					username: decoded.username,
 					userId: decoded.userId,
 				};
-				console.log(req.user);
+				console.log("jwt_auth: ", req.user);
 				next();
 			} catch (err) {
 				return res.status(401).json({
 					errorCode: "EC0",
-					errorMessage: "Token hết hạn/ không hợp lệ!",
+					errorMessage:
+						"Token hết hạn/ không hợp lệ!",
 				});
 			}
 		} else {
