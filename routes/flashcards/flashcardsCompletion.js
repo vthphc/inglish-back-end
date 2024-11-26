@@ -57,17 +57,14 @@ router.post("/", async (req, res) => {
             flashcardData = JSON.parse(rawResponse);
         } catch (jsonErr) {
             console.error("Invalid JSON response from AI:", rawResponse);
-            return res
-                .status(500)
-                .json({
-                    message: "AI response is not valid JSON",
-                    error: jsonErr.message,
-                });
+            return res.status(500).json({
+                message: "AI response is not valid JSON",
+                error: jsonErr.message,
+            });
         }
 
         // Step 2: Fetch pronunciation data for the word from dictionaryapi.dev
         const dictionaryApiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${flashcardData.word}`;
-        console.log("Fetching pronunciation data from:", dictionaryApiUrl);
         let phonetics = [];
 
         try {
