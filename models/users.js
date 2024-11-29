@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const Flashcard = require("./flashcards");
+const Phrase = require("./phrases");
+const Exam = require("./exams");
 
 const userSchema = new mongoose.Schema(
 	{
@@ -19,7 +22,12 @@ const userSchema = new mongoose.Schema(
 			//     },
 			// ],
 			games: [String],
-			flashcards: [String],
+			flashcards: [
+				{
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "Flashcard",
+				},
+			],
 			phrases: [
 				{
 					type: mongoose.Schema.Types.ObjectId,
