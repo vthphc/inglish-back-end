@@ -33,9 +33,7 @@ router.get("/user/:userId", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
 	try {
-		const removedFlashcard = await Flashcard.remove({
-			_id: req.params.id,
-		});
+		const removedFlashcard = await Flashcard.findByIdAndDelete(req.params.id);
 		res.json(removedFlashcard);
 	} catch (err) {
 		res.json({ message: err });

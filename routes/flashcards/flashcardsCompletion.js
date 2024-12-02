@@ -23,10 +23,13 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // );
 
 router.post("/", async (req, res) => {
-	const { topic } = req.body;
-	const userId = req.user.userId;
+    const { topic, userId } = req.body;
 
-	const prompt = `
+	if (!topic) {
+		return res.status(400).json({ message: "Topic is required" });
+	}
+
+    const prompt = `
     Generate a flashcard about the topic "${topic}" with the following details:
     - A single word related to the topic.
     - The word's definition.
@@ -53,63 +56,56 @@ router.post("/", async (req, res) => {
         let rawResponse = completions.response.text().trim();
         rawResponse = rawResponse.replace(/```(?:json)?/g, "");
 
-		let flashcardData;
-		try {
-			flashcardData = JSON.parse(rawResponse);
-		} catch (jsonErr) {
-			console.error(
-				"Invalid JSON response from AI:",
-				rawResponse
-			);
-			return res.status(500).json({
-				message: "AI response is not valid JSON",
-				error: jsonErr.message,
-			});
-		}
+        let flashcardData;
+        try {
+            flashcardData = JSON.parse(rawResponse);
+        } catch (jsonErr) {
+            console.error("Invalid JSON response from AI:", rawResponse);
+            return res.status(500).json({
+                message: "AI response is not valid JSON",
+                error: jsonErr.message,
+            });
+        }
 
         // Step 2: Fetch pronunciation data for the word from dictionaryapi.dev
         const dictionaryApiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${flashcardData.word}`;
         let phonetics = [];
 
-		try {
-			const dictionaryResponse = await axios.get(
-				dictionaryApiUrl
-			);
-			const dictionaryData = dictionaryResponse.data;
+        try {
+            const dictionaryResponse = await axios.get(dictionaryApiUrl);
+            const dictionaryData = dictionaryResponse.data;
 
-			// Extract phonetics (text and audio)
-			phonetics =
-				dictionaryData[0]?.phonetics?.map(
-					(phonetic) => ({
-						text: phonetic.text || null,
-						audio: phonetic.audio || null,
-					})
-				) || [];
-		} catch (dictionaryErr) {
-			console.warn(
-				`Failed to fetch pronunciation for word "${flashcardData.word}":`,
-				dictionaryErr.message
-			);
-		}
+            // Extract phonetics (text and audio)
+            phonetics =
+                dictionaryData[0]?.phonetics?.map((phonetic) => ({
+                    text: phonetic.text || null,
+                    audio: phonetic.audio || null,
+                })) || [];
+        } catch (dictionaryErr) {
+            console.warn(
+                `Failed to fetch pronunciation for word "${flashcardData.word}":`,
+                dictionaryErr.message
+            );
+        }
 
-		// Step 3: Add additional fields to the flashcard data
-		flashcardData.userId = userId;
-		flashcardData.createdAt = new Date();
-		flashcardData.phonetics = phonetics;
+        // Step 3: Add additional fields to the flashcard data
+        flashcardData.userId = userId;
+        flashcardData.createdAt = new Date();
+        flashcardData.phonetics = phonetics;
 
-		// Step 4: Create and save the flashcard in the database
-		const newFlashcard = new Flashcard(flashcardData);
-		await newFlashcard.save();
+        // Step 4: Create and save the flashcard in the database
+        const newFlashcard = new Flashcard(flashcardData);
+        await newFlashcard.save();
 
-		// Step 5: Respond with the saved flashcard data
-		res.status(201).json(newFlashcard);
-	} catch (err) {
-		console.error("Error creating flashcard:", err.message);
-		res.status(500).json({
-			message: "Failed to create flashcard",
-			error: err.message,
-		});
-	}
+        // Step 5: Respond with the saved flashcard data
+        res.status(201).json(newFlashcard);
+    } catch (err) {
+        console.error("Error creating flashcard:", err.message);
+        res.status(500).json({
+            message: "Failed to create flashcard",
+            error: err.message,
+        });
+    }
 });
 
 module.exports = router;

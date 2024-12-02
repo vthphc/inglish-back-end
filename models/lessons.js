@@ -10,7 +10,7 @@ const lessonSchema = new mongoose.Schema(
                 questionName: String,
                 questionOptions: [String],
                 correctAnswer: String,
-                AIExplaination: String,
+                AIExplanation: String,
             },
         ],
         createdAt: Date,
