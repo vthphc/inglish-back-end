@@ -43,6 +43,7 @@ app.use("/phrases", require("./routes/phrases/phrases"));
 app.use("/phraseCompletion", require("./routes/phrases/phraseCompletion"));
 
 app.use("/lessons", require("./routes/lessons/lessons"));
+app.use("/lessonCompletion", require("./routes/lessons/lessonCompletion"));
 app.use("/exams", require("./routes/exams/exams"));
 
 app.use("/flashcards", require("./routes/flashcards/flashcards"));

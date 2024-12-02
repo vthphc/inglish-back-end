@@ -45,10 +45,9 @@ router.post("/", async (req, res) => {
     `;
 
     try {
-        // Step 1: Generate flashcard content from Google Generative AI
         const completions = await model.generateContent(prompt);
 
-        // Clean and parse the AI response
+        // clean and parse the AI response
         let rawResponse = completions.response.text().trim();
         rawResponse = rawResponse.replace(/```(?:json)?/g, "");
 
@@ -63,7 +62,6 @@ router.post("/", async (req, res) => {
             });
         }
 
-        // Step 2: Fetch pronunciation data for the word from dictionaryapi.dev
         const dictionaryApiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${flashcardData.word}`;
         let phonetics = [];
 
