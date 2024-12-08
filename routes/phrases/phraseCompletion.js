@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Phrase = require("../../models/phrases");
+const User = require("../../models/users");
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
@@ -56,6 +57,11 @@ router.post("/", async (req, res) => {
 
         // Save to the database
         await newPhrase.save();
+
+        //save this newPhrase ID into user.phrases[]
+        const user = await User.findById(userId);
+        user.learning.phrases.push(newPhrase._id);
+        await user.save();
 
         // Send the saved data back in response
         res.json(newPhrase);
