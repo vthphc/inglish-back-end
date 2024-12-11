@@ -12,25 +12,25 @@ const databaseURL = process.env.DB_URL;
 
 app.use(cors());
 app.use(bodyParser.json());
-//app.all("*", jwt_auth);
+app.all("*", jwt_auth);
 //Xài middleware này trên tất cả routes để xác thực là đã có người dùng đăng nhập (đã có token),
 //nếu muốn truy cập tất cả các routes thì comment lại code app.all() trên
 
 mongoose.connect(databaseURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
 });
 
 mongoose.connection.once("open", () => {
-    console.log("Connected to database");
+	console.log("Connected to database");
 });
 
 app.get("/", (req, res) => {
-    res.json({ message: "This is inglish-API" });
+	res.json({ message: "This is inglish-API" });
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on port: ${port}`);
+	console.log(`Server is running on port: ${port}`);
 });
 
 app.use("/completions", require("./routes/completions"));
@@ -48,6 +48,6 @@ app.use("/exams", require("./routes/exams/exams"));
 
 app.use("/flashcards", require("./routes/flashcards/flashcards"));
 app.use(
-    "/flashcardsCompletion",
-    require("./routes/flashcards/flashcardsCompletion")
+	"/flashcardsCompletion",
+	require("./routes/flashcards/flashcardsCompletion")
 );

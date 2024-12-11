@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Flashcard = require("./flashcards");
 const Phrase = require("./phrases");
 const Exam = require("./exams");
+const Lesson = require("./lessons");
 
 const userSchema = new mongoose.Schema(
 	{
@@ -41,7 +42,17 @@ const userSchema = new mongoose.Schema(
 					type: mongoose.Schema.Types.ObjectId,
 					ref: "Exam",
 				},
-				score: Number,
+				selectedAnswers: [
+					{
+						questionId: {
+							type: mongoose.Schema.Types.ObjectId,
+							ref: "Exam.questions",
+						},
+						selectedAnswer: String,
+						isCorrect: Boolean,
+					},
+				],
+				score: String,
 			},
 		],
 		createdAt: Date,
