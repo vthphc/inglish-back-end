@@ -30,6 +30,36 @@ router.get("/user/:userId", async (req, res) => {
     }
 });
 
+router.get("/user/:userId/this-month", async (req, res) => {
+    const userId = req.params.userId;
+
+    const currentDate = new Date();
+    const startOfThisMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+    );
+    const endOfThisMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0
+    );
+
+    try {
+        const phrases = await Phrase.find({
+            userId,
+            createdAt: {
+                $gte: startOfThisMonth,
+                $lte: endOfThisMonth,
+            },
+        });
+
+        res.json(phrases);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.delete("/:id", async (req, res) => {
     try {
         const phrase = await Phrase.findByIdAndDelete(req.params.id);

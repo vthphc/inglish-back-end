@@ -3,6 +3,7 @@ const router = express.Router();
 const Flashcard = require("../../models/flashcards");
 const axios = require("axios");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const User = require("../../models/users");
 
 // Initialize Google Generative AI model
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -25,9 +26,9 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 router.post("/", async (req, res) => {
     const { topic, userId } = req.body;
 
-	if (!topic) {
-		return res.status(400).json({ message: "Topic is required" });
-	}
+    if (!topic) {
+        return res.status(400).json({ message: "Topic is required" });
+    }
 
     const prompt = `
     Generate a flashcard about the topic "${topic}" with the following details:
@@ -96,6 +97,10 @@ router.post("/", async (req, res) => {
         // Step 4: Create and save the flashcard in the database
         const newFlashcard = new Flashcard(flashcardData);
         await newFlashcard.save();
+
+        const user = await User.findById(userId);
+        user.learning.flashcards.push(newFlashcard._id);
+        await user.save();
 
         // Step 5: Respond with the saved flashcard data
         res.status(201).json(newFlashcard);
