@@ -42,10 +42,12 @@ const userSchema = new mongoose.Schema(
 					type: mongoose.Schema.Types.ObjectId,
 					ref: "Exam",
 				},
+				title: String,
 				selectedAnswers: [
 					{
 						questionId: {
-							type: mongoose.Schema.Types.ObjectId,
+							type: mongoose.Schema
+								.Types.ObjectId,
 							ref: "Exam.questions",
 						},
 						selectedAnswer: String,

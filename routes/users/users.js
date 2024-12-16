@@ -29,24 +29,47 @@ router.get("/:id/exams-taken", async (req, res) => {
 	}
 });
 
+router.get("/:id/exams-taken/:examId", async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id);
+		try {
+			const exam = user.examsTaken.find(
+				(exam) =>
+					exam._id.toString() ===
+					req.params.examId
+			);
+			console.log(exam);
+			res.json(exam);
+		} catch (error) {
+			res.status(500).json({ error: error.message });
+		}
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 router.post("/:id/exams-taken", async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id);
-		const { examId, score, selectedAnswers } = req.body;
+		const { examId, title, score, selectedAnswers } = req.body;
 		const doesExamExist = user.examsTaken.some(
-			(exam) => exam.examId === examId
+			(exam) => exam.examId.toString() === examId
 		);
+
 		if (doesExamExist) {
 			currentExam = user.examsTaken.find(
-				(exam) => exam.examId === examId
+				(exam) => exam.examId.toString() === examId
 			);
 			currentExam.selectedAnswers = selectedAnswers;
 			currentExam.score = score;
-			user.save();
+			await user.save();
+			return res.json(user.examsTaken);
 		}
-		user.examsTaken.push({ examId, selectedAnswers, score });
+
+		user.examsTaken.push({ examId, title, selectedAnswers, score });
 		await user.save();
-		res.json(user.examsTaken);
+
+		return res.json(user.examsTaken);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
