@@ -43,7 +43,7 @@ router.post("/reading", async (req, res) => {
                 const prompt = `
                     Provide a brief, single-line explanation for why "${
                         question.correctAnswer
-                    }" is the correct word in the sentence: "${
+                    }" is the correct answer for this question: "${
                     question.questionName
                 }". 
                     Options are: ${question.questionOptions.join(", ")}. 
@@ -79,6 +79,37 @@ router.post("/reading", async (req, res) => {
         const updatedLesson = await Lesson.findByIdAndUpdate(
             lessonId,
             { $set: { questions: updatedQuestions } },
+            { new: true }
+        );
+
+        if (!updatedLesson) {
+            return res.status(404).json({ message: "Lesson not found." });
+        }
+
+        res.status(200).json(updatedLesson);
+    } catch (error) {
+        console.error("Error in API route:", error);
+
+        res.status(500).json({
+            message: "An error occurred while processing the request.",
+            error: error.message,
+        });
+    }
+});
+
+router.post("/clear", async (req, res) => {
+    try {
+        const { lessonId } = req.body;
+
+        if (!lessonId) {
+            return res.status(400).json({
+                message: "Invalid request. 'lessonId' is required.",
+            });
+        }
+
+        const updatedLesson = await Lesson.findByIdAndUpdate(
+            lessonId,
+            { $set: { "questions.$[].AIExplanation": "" } },
             { new: true }
         );
 
