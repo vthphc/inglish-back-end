@@ -80,22 +80,27 @@ router.post("/getDataFromDictionaryAPI", async (req, res) => {
         const response = await fetch(
             `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
         );
-        const data = await response.json();
 
-        const newFlashcard = new Flashcard({
-            topic: "Vocabulary",
-            word: data[0].word,
-            definition: data[0].meanings[0].definitions[0].definition,
-            example: "",
-            category: data[0].meanings[0].partOfSpeech,
-            phonetics: [],
-            createdAt: new Date(),
-            userId,
-        });
+        if (response.status === 404) {
+            return res.status(404).json({ message: "Word not found" });
+        } else {
+            const data = await response.json();
 
-        newFlashcard.save();
+            const newFlashcard = new Flashcard({
+                topic: "Vocabulary",
+                word: data[0].word,
+                definition: data[0].meanings[0].definitions[0].definition,
+                example: "",
+                category: data[0].meanings[0].partOfSpeech,
+                phonetics: data[0].phonetics[0],
+                createdAt: new Date(),
+                userId,
+            });
 
-        res.json(newFlashcard);
+            newFlashcard.save();
+
+            res.json(newFlashcard);
+        }
     } catch (err) {
         res.json({ message: err });
     }
