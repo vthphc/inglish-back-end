@@ -35,7 +35,7 @@ router.get("/:id/exams-taken/:examId", async (req, res) => {
 		try {
 			const exam = user.examsTaken.find(
 				(exam) =>
-					exam._id.toString() ===
+					exam.examId.toString() ===
 					req.params.examId
 			);
 			console.log(exam);
