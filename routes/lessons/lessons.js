@@ -27,7 +27,6 @@ router.post("/", async (req, res) => {
         type: req.body.type,
         contentURL: req.body.contentURL,
         questions: req.body.questions,
-        AIExplanation: "",
         createdAt: new Date(),
     });
 

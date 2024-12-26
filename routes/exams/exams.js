@@ -73,7 +73,7 @@ router.patch("/:examId", async (req, res) => {
 
 router.delete("/:examId", async (req, res) => {
 	try {
-		const removedExam = await Exam.remove({
+		const removedExam = await Exam.findByIdAndDelete({
 			_id: req.params.examId,
 		});
 		res.json(removedExam);
